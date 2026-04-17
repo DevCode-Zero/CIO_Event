@@ -42,24 +42,24 @@ export function GuestDashboard() {
       }
       setLoading(false);
     };
-    
+
     loadAttendee();
   }, [navigate]);
 
   useEffect(() => {
     console.log("[GuestDashboard] Setting up persistent question channel...");
-    
+
     channelRef.current = supabase.channel(REALTIME_CHANNEL);
 
     channelRef.current
       .on('broadcast', { event: 'question-push' }, (payload) => {
         console.log("[GuestDashboard] Received question push:", payload.payload);
         const question = payload.payload as PushedQuestion;
-        
+
         if (!answeredQuestionsRef.current.includes(question.id)) {
           setCurrentPushedQuestion(question);
           setShowLiveQuestion(true);
-          
+
           if ('vibrate' in navigator) {
             navigator.vibrate([100, 50, 100]);
           }

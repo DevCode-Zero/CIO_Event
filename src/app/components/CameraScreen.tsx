@@ -22,6 +22,20 @@ export function CameraScreen({ onSuccess }: CameraScreenProps) {
     };
   }, []);
 
+  const requestCameraPermission = async () => {
+    try {
+      await navigator.permissions.query({ name: "camera" as PermissionName }).then(async (result) => {
+        if (result.state === "prompt") {
+          await navigator.mediaDevices.getUserMedia({ video: true });
+        } else if (result.state === "denied") {
+          setErrorMessage("Camera access denied. Please enable it in your browser settings.");
+        }
+      });
+    } catch {
+      await navigator.mediaDevices.getUserMedia({ video: true });
+    }
+  };
+
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -38,7 +52,7 @@ export function CameraScreen({ onSuccess }: CameraScreenProps) {
       }, 2000);
     } catch (err) {
       setStatus("error");
-      setErrorMessage("Hmm… we couldn't access your camera. Let's try that again.");
+      setErrorMessage("Camera access denied. Click 'Enable Camera' to allow access in browser settings.");
     }
   };
 
@@ -191,12 +205,23 @@ export function CameraScreen({ onSuccess }: CameraScreenProps) {
             transition={{ delay: 0.3 }}
             className="absolute -bottom-16 left-0 right-0 text-center"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/80 backdrop-blur-sm rounded-full">
+            <button
+              onClick={async () => {
+                if (status === "error") {
+                  await requestCameraPermission();
+                  setStatus("idle");
+                  startCamera();
+                }
+              }}
+              className={`inline-flex items-center gap-2 px-4 py-2 bg-secondary/80 backdrop-blur-sm rounded-full transition-all ${
+                status === "error" ? "cursor-pointer hover:bg-secondary" : ""
+              }`}
+            >
               <Camera className="w-4 h-4 text-primary" />
               <span className="text-muted-foreground" style={{ fontSize: "0.875rem" }}>
-                Secure AI scanning
+                {status === "error" ? "Enable Camera" : "Secure AI scanning"}
               </span>
-            </div>
+            </button>
           </motion.div>
         </div>
       </div>
