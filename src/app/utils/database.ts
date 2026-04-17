@@ -168,6 +168,15 @@ export const db = {
     return count || 0;
   },
 
+  async getUniqueRespondents() {
+    const { data, error } = await supabase
+      .from("responses")
+      .select("attendee_id");
+    if (error) throw error;
+    const uniqueIds = new Set(data?.map(r => r.attendee_id) || []);
+    return uniqueIds.size;
+  },
+
   async addMeeting(title: string, startTime: string, endTime?: string, description?: string, location?: string) {
     const { data, error } = await supabase
       .from("meetings")

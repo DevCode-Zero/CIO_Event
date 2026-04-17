@@ -14,3 +14,4 @@ export const supabase = createClient(supabaseUrl, publicAnonKey, {
 export const REALTIME_CHANNEL = 'cio-summit-questions';
 export const MEETINGS_CHANNEL = 'cio-summit-meetings';
 export const SPEAKER_CHANNEL = 'cio-summit-speaker';
+export const PRESENCE_CHANNEL = 'cio-summit-presence';

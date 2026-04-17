@@ -2,24 +2,26 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Users, UserCheck, Activity, TrendingUp } from "lucide-react";
 import { db } from "../../utils/database";
+import { supabase, PRESENCE_CHANNEL } from "../../utils/supabaseClient";
 
 export function StatsOverview() {
   const [totalAttendees, setTotalAttendees] = useState(0);
   const [checkedIn, setCheckedIn] = useState(0);
+  const [questionsPushed, setQuestionsPushed] = useState(0);
   const [totalResponses, setTotalResponses] = useState(0);
-  const [questionsSent, setQuestionsSent] = useState(0);
+  const [liveUsers, setLiveUsers] = useState(0);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
         const attendees = await db.getAttendees();
-        const responses = await db.getTotalResponses();
         const questions = await db.getQuestions();
+        const responses = await db.getTotalResponses();
         
         setTotalAttendees(attendees.length);
         setCheckedIn(attendees.filter(a => a.checked_in_at).length);
+        setQuestionsPushed(questions.filter(q => q.status === "sent").length);
         setTotalResponses(responses);
-        setQuestionsSent(questions.filter(q => q.status === "sent").length);
       } catch (err) {
         console.error("Failed to load stats:", err);
       }
@@ -29,6 +31,29 @@ export function StatsOverview() {
     
     const interval = setInterval(loadStats, 10000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase.channel(PRESENCE_CHANNEL);
+
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState();
+        const userCount = Object.values(state).flat().length;
+        setLiveUsers(userCount);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({
+            user_id: Math.random().toString(36).substring(7),
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const attendanceRate = totalAttendees > 0 
@@ -55,18 +80,18 @@ export function StatsOverview() {
     },
     {
       label: "Live Now",
-      value: String(questionsSent),
-      subtext: questionsSent > 0 ? "Active questions" : "No active questions",
+      value: String(liveUsers),
+      subtext: liveUsers > 0 ? "People viewing" : "No viewers",
       icon: Activity,
       color: "text-[#10b981]",
       bgColor: "bg-[#10b981]/10",
       borderColor: "border-[#10b981]/20",
-      pulse: questionsSent > 0,
+      pulse: liveUsers > 0,
     },
     {
-      label: "Engagement Rate",
-      value: checkedIn > 0 ? `${Math.round((totalResponses / checkedIn) * 100)}%` : "0%",
-      subtext: "Poll participation",
+      label: "Poll Engagement",
+      value: checkedIn > 0 && questionsPushed > 0 ? `${Math.round((totalResponses / (checkedIn * questionsPushed)) * 100)}%` : "0%",
+      subtext: `${totalResponses} responses / ${checkedIn} checked in / ${questionsPushed} pushed`,
       icon: TrendingUp,
       color: "text-[#06b6d4]",
       bgColor: "bg-[#06b6d4]/10",

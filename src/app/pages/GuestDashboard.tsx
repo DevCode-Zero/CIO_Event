@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { DashboardScreen } from "../components/DashboardScreen";
 import { db } from "../utils/database";
 import { type Attendee } from "../utils/database";
-import { supabase, REALTIME_CHANNEL } from "../utils/supabaseClient";
+import { supabase, REALTIME_CHANNEL, PRESENCE_CHANNEL } from "../utils/supabaseClient";
 
 interface PushedQuestion {
   id: string | number;
@@ -76,6 +76,30 @@ export function GuestDashboard() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!attendee) return;
+
+    const presenceChannel = supabase.channel(PRESENCE_CHANNEL);
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        console.log("[GuestDashboard] Presence synced");
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await presenceChannel.track({
+            user_id: attendee.id,
+            user_name: attendee.name,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(presenceChannel);
+    };
+  }, [attendee]);
 
   const handleQuestionClick = () => {
     if (currentPushedQuestion) {

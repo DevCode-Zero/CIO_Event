@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutDashboard, Users, MessageSquare, FileText, Calendar, LogOut, ShieldCheck } from "lucide-react";
 import { StatsOverview } from "../components/admin/StatsOverview";
+import { RecentActivity } from "../components/admin/RecentActivity";
 import { AttendeesList } from "../components/admin/AttendeesList";
 import { QuestionManager } from "../components/admin/QuestionManager";
 import { ReportGenerator } from "../components/admin/ReportGenerator";
@@ -155,48 +156,7 @@ export function AdminDashboard() {
                   <h3 className="mb-4" style={{ fontSize: "1.125rem", fontWeight: 600 }}>
                     Recent Activity
                   </h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2" />
-                      <div className="flex-1">
-                        <p style={{ fontSize: "0.9375rem", fontWeight: 500 }}>
-                          Question sent to attendees
-                        </p>
-                        <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
-                          2 minutes ago
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#10b981] rounded-full mt-2" />
-                      <div className="flex-1">
-                        <p style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Emily Thompson checked in</p>
-                        <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
-                          8 minutes ago
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#10b981] rounded-full mt-2" />
-                      <div className="flex-1">
-                        <p style={{ fontSize: "0.9375rem", fontWeight: 500 }}>
-                          David Rodriguez checked in
-                        </p>
-                        <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
-                          15 minutes ago
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2" />
-                      <div className="flex-1">
-                        <p style={{ fontSize: "0.9375rem", fontWeight: 500 }}>Event session started</p>
-                        <p className="text-muted-foreground" style={{ fontSize: "0.8125rem" }}>
-                          45 minutes ago
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <RecentActivity />
                 </div>
               </div>
             </motion.div>
