@@ -62,6 +62,11 @@ export function DashboardScreen({ name, onQuestionClick, onNotificationClick, pu
           loadFeaturedSpeaker();
         }
       })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'event_settings' },
+        () => loadFeaturedSpeaker()
+      )
       .subscribe();
 
     return () => {

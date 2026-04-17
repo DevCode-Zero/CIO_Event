@@ -17,7 +17,7 @@ const tabs = [
   { id: "overview", label: "Overview", icon: LayoutDashboard, path: "/admin/dashboard" },
   { id: "attendees", label: "Attendees", icon: Users, path: "/admin/attendees" },
   { id: "questions", label: "Questions", icon: MessageSquare, path: "/admin/questions" },
-  { id: "individual", label: "Individual Reports", icon: UserCheck, path: "/admin/individual-reports" },
+  { id: "individual", label: "Mini Inspire Report", icon: UserCheck, path: "/admin/individual-reports" },
   { id: "reports", label: "Reports", icon: FileText, path: "/admin/reports" },
   { id: "meetings", label: "Meeting Processes", icon: Calendar, path: "/admin/meetings" },
 ];

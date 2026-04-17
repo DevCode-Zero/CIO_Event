@@ -237,8 +237,7 @@ export const db = {
   async updateEventSettings(settings: Partial<EventSettings>) {
     const { data, error } = await supabase
       .from("event_settings")
-      .update({ ...settings, updated_at: new Date().toISOString() })
-      .eq("id", "default")
+      .upsert({ id: "default", ...settings, updated_at: new Date().toISOString() })
       .select()
       .single();
     if (error) throw error;

@@ -224,7 +224,7 @@ export function IndividualReports() {
     >
       <div className="mb-8">
         <h2 className="mb-2" style={{ fontSize: "1.875rem", fontWeight: 600 }}>
-          Individual Reports
+          Mini Inspire Report
         </h2>
         <p className="text-muted-foreground" style={{ fontSize: "1rem" }}>
           View and export attendee-specific response data
